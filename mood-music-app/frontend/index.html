@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🎧 Mind Melody</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom quick styles (keeps file standalone) -->
+  <style>
+    :root{
+      --neon1: #9b5cff;
+      --neon2: #5be7ff;
+      --neon3: #ff6bb0;
+      --card-bg: rgba(255,255,255,0.03);
+    }
+    html,body{height:100%}
+    body{
+      background:
+        radial-gradient(600px 300px at 10% 10%, rgba(155,92,255,0.08), transparent 10%),
+        radial-gradient(600px 300px at 90% 90%, rgba(91,231,255,0.04), transparent 10%),
+        linear-gradient(180deg,#040616,#071022);
+      color:#eafcff;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      -webkit-font-smoothing:antialiased;
+      display:flex;flex-direction:column;
+      min-height:100vh;
+      padding-bottom:120px; /* space for mini-player */
+    }
+
+    .hero {
+      padding:5.5rem 1rem 2rem;
+      text-align:center;
+    }
+    .brand-title{
+      font-size:2.25rem;
+      font-weight:700;
+      letter-spacing:0.6px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:.6rem;
+    }
+    .brand-title .logo-mark{
+      width:44px;height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;
+      background:linear-gradient(90deg,var(--neon2),var(--neon1));box-shadow:0 12px 36px rgba(91,231,255,0.06);font-weight:700;color:#012;
+    }
+    .subtitle{color:rgba(230,250,255,0.8);margin-top:.5rem;font-size:1.05rem}
+
+    /* Emoji grid */
+    .emoji-grid{max-width:880px;margin:1.6rem auto 0}
+    .mood-btn{
+      width:100%;min-height:110px;border-radius:14px;background:var(--card-bg);border:1px solid rgba(255,255,255,0.04);
+      color:var(--neon2);font-size:28px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .mood-btn .label{font-size:13px;margin-top:.6rem;color:rgba(235,250,255,0.85)}
+    .mood-btn:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(5,15,30,0.6)}
+    .mood-btn.selected{background:linear-gradient(135deg,rgba(155,92,255,0.12),rgba(91,231,255,0.08));border-color:rgba(155,92,255,0.12);color:#021320}
+
+    /* search */
+    .search-wrap{max-width:760px;margin:1.2rem auto 0}
+    .form-control:focus{box-shadow:0 8px 28px rgba(91,231,255,0.06);border-color:rgba(91,231,255,0.28)}
+
+    /* cards & suggestions */
+    .card-surface{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;border:1px solid rgba(255,255,255,0.03);padding:1rem}
+    .suggestion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1rem}
+
+    .song-card{display:flex;gap:.8rem;align-items:center;padding:.8rem;border-radius:12px;background:rgba(0,0,0,0.14);transition:transform .14s,box-shadow .14s}
+    .song-card:hover{transform:translateY(-8px);box-shadow:0 22px 50px rgba(3,12,22,0.6)}
+    .song-art{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,var(--neon1),var(--neon2))}
+    .song-title{font-weight:700;margin:0;color:#eafcff}
+    .song-artist{font-size:.9rem;color:rgba(230,250,255,0.75)}
+
+    /* mini player */
+    .mini-player{
+      position:fixed;left:16px;right:16px;bottom:16px;height:78px;border-radius:12px;background:linear-gradient(90deg, rgba(3,6,14,0.9), rgba(6,12,26,0.85));
+      display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 22px 60px rgba(2,8,20,0.7);z-index:120;
+    }
+    .mini-cover{width:56px;height:56px;border-radius:8px;object-fit:cover;background:linear-gradient(90deg,var(--neon1),var(--neon3))}
+    .mini-meta{flex:1;min-width:0}
+    .mini-title{font-weight:700}
+    .mini-controls{display:flex;gap:8px;align-items:center}
+    .icon-btn{background:linear-gradient(90deg,var(--neon2),var(--neon1));border:0;padding:8px 12px;border-radius:10px;color:#021320;font-weight:700;cursor:pointer}
+    .icon-btn:active{transform:scale(.98)}
+
+    /* responsive tweaks */
+    @media (max-width:576px){
+      .hero{padding:3.5rem 1rem 1rem}
+      .mood-btn{min-height:92px}
+      .mini-player{left:10px;right:10px;padding:8px;height:72px}
+      .brand-title{font-size:1.6rem}
+    }
+  </style>
+</head>
+<body>
+  <header class="py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <div class="logo-mark" style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#5be7ff,#9b5cff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#021320">♫</div>
+        <div class="d-flex flex-column">
+          <span class="fw-bold text-white">Mind Melody</span>
+          <small class="text-muted">Mood-based music</small>
+        </div>
+      </div>
+
+      <nav class="d-none d-md-flex gap-3">
+        <a href="#home" class="text-muted text-decoration-none">Home</a>
+        <a href="#explore" class="text-muted text-decoration-none">Explore</a>
+        <a href="#playlist" class="text-muted text-decoration-none">My Playlist</a>
+        <a href="#profile" class="text-muted text-decoration-none">Profile</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-grow-1">
+    <section class="hero">
+      <div class="brand-title mx-auto">
+        <div class="logo-mark">🎧</div>
+        <div>Mind Melody</div>
+      </div>
+      <p class="subtitle mx-auto">Play music according to your mood — quick suggestions, previews and saves.</p>
+
+      <div class="search-wrap">
+        <form id="searchForm" class="d-flex mx-auto" style="gap:.6rem">
+          <input id="searchInput" class="form-control form-control-lg" type="search" placeholder="Search songs or artists..." />
+          <button id="searchBtn" class="btn btn-lg" style="background:linear-gradient(90deg,#5be7ff,#9b5cff);color:#021320">Search</button>
+        </form>
+      </div>
+
+      <div class="emoji-grid container">
+        <div class="row g-3 mt-3">
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Happy" id="mood-happy">😄 <span class="label">Happy</span></button>
+          </div>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Sad" id="mood-sad">😢 <span class="label">Sad</span></button>
+          </div>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Angry" id="mood-angry">😡 <span class="label">Angry</span></button>
+          </div>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Relaxed" id="mood-relaxed">😌 <span class="label">Relaxed</span></button>
+          </div>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Energetic" id="mood-energetic">⚡ <span class="label">Energetic</span></button>
+          </div>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Excited" id="mood-excited">🎉 <span class="label">Excited</span></button>
+          </div>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Romantic" id="mood-romantic">💕 <span class="label">Romantic</span></button>
+          </div>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <button class="mood-btn w-100" data-mood="Night" id="mood-night">🌙 <span class="label">Night</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="container mt-4">
+        <div class="card-surface p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-1">Current mood</h5>
+              <div id="currentMood" class="h6 text-white">—</div>
+              <div id="moodTopSong" class="text-muted small">Top suggestion will appear here</div>
+            </div>
+            <div>
+              <button id="ctaPlay" class="btn btn-primary" style="background:linear-gradient(90deg,#9b5cff,#5be7ff);border:0" onclick="playMoodMix()">Play Mood Mix</button>
+            </div>
+          </div>
+
+          <div id="suggestionGrid" class="suggestion-grid mt-3">
+            <!-- JS will inject song cards here -->
+          </div>
+
+          <!-- Demo/Testing Section -->
+          <div class="mt-3 pt-3 border-top">
+            <h6 class="text-muted mb-2">🚀 Demo: Test All Mood Categories</h6>
+            <p class="text-muted small mb-3">Click these buttons to test mood tracking with real examples (data stored in MySQL):</p>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#ff6b9d,#f7931e);color:white;border:0" onclick="testMoodTrack('Happy', 'Happy — Pharrell Williams')">Happy 😄</button>
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#5b9bd5,#4472c4);color:white;border:0" onclick="testMoodTrack('Sad', 'Someone Like You — Adele')">Sad 😢</button>
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#ff4444,#cc0000);color:white;border:0" onclick="testMoodTrack('Angry', 'Break Stuff — Limp Bizkit')">Angry 😡</button>
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#70ad47,#548235);color:white;border:0" onclick="testMoodTrack('Relaxed', 'Weightless — Marconi Union')">Relaxed 😌</button>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#9b59b6,#8e44ad);color:white;border:0" onclick="testMoodTrack('Energetic', 'Blinding Lights — The Weeknd')">Energetic ⚡</button>
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#e74c3c,#c0392b);color:white;border:0" onclick="testMoodTrack('Excited', 'Can\'t Stop the Feeling — Justin Timberlake')">Excited 🎉</button>
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#f39c12,#e67e22);color:white;border:0" onclick="testMoodTrack('Romantic', 'Perfect — Ed Sheeran')">Romantic 💕</button>
+              <button class="btn btn-sm" style="background:linear-gradient(90deg,#2c3e50,#34495e);color:white;border:0" onclick="testMoodTrack('Night', 'Night Changes — One Direction')">Night 🌙</button>
+            </div>
+            <div class="mt-3">
+              <button class="btn btn-sm btn-success me-2" onclick="populateAllSampleData()">🎵 Populate All Sample Data</button>
+              <small class="text-muted">💡 Each click stores data in MySQL database!</small>
+              <br>
+              <button class="btn btn-sm btn-outline-light mt-2" onclick="viewDatabase()">📊 View Database</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mini player (fixed bottom) -->
+  <div id="miniPlayer" class="mini-player d-none" aria-hidden="true" role="region" aria-label="Mini player" style="cursor: pointer;" onclick="navigateToPlayer()">
+    <img id="miniCover" src="" alt="cover" class="mini-cover" />
+    <div class="mini-meta">
+      <div id="miniTitle" class="mini-title">No song</div>
+      <div id="miniArtist" class="text-muted small">—</div>
+    </div>
+    <div class="mini-controls ms-auto">
+      <button id="miniPrev" class="icon-btn me-1" onclick="event.stopPropagation()">⏮</button>
+      <button id="miniPlay" class="icon-btn" onclick="event.stopPropagation()">▶</button>
+      <button id="miniNext" class="icon-btn ms-1" onclick="event.stopPropagation()">⏭</button>
+    </div>
+    <audio id="miniAudio" preload="none"></audio>
+  </div>
+
+  <footer class="site-footer mt-5">
+    <div class="container d-flex justify-content-between align-items-center py-3">
+      <div class="text-muted">© Mind Melody — Mood Music</div>
+      <div class="d-flex gap-3">
+        <a href="#" class="text-muted text-decoration-none">Twitter</a>
+        <a href="#" class="text-muted text-decoration-none">Instagram</a>
+        <a href="#" class="text-muted text-decoration-none">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS + Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- App scripts (existing) -->
+  <script src="js/app.js"></script>
+  <script src="js/player.js"></script>
+
+  <!-- Minimal helper to show mini-player hook points (keeps UI interactive until app.js wires up) -->
+  <script>
+    // Show tracking notification
+    function showTrackingNotification(message) {
+      // Create a temporary notification element
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(90deg, #9b5cff, #5be7ff);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease-out;
+      `;
+      
+      // Add animation styles
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+          from { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(100%); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      document.body.appendChild(notification);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // quick visual toggle for mini player when a mood button is clicked (app.js should replace this)
+    document.querySelectorAll('.mood-btn').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        const mood = btn.dataset.mood || '';
+        const cur = document.getElementById('currentMood');
+        if (cur) cur.textContent = mood;
+
+        // Get real songs for this mood and track the interaction
+        if (mood) {
+          try {
+            // Show loading state
+            const moodTopSongEl = document.getElementById('moodTopSong');
+            if (moodTopSongEl) {
+              moodTopSongEl.textContent = 'Loading songs...';
+            }
+
+            // Fetch real songs for this mood
+            const response = await fetch(`/api/songs/${encodeURIComponent(mood)}`);
+            const data = await response.json();
+
+            console.log('API Response for', mood, ':', data); // Debug log
+
+            if (data.songs && data.songs.length > 0) {
+              const firstSong = data.songs[0];
+              const songTitle = firstSong.title || firstSong.name || `${mood} Mix`;
+              const artist = firstSong.artist || '';
+
+              console.log('Selected song:', songTitle); // Debug log
+
+              // Track mood play with real data
+              const sessionId = localStorage.getItem('mindmelody_session_id') ||
+                               (localStorage.setItem('mindmelody_session_id', Date.now() + '-' + Math.random().toString(36).substr(2, 9)), localStorage.getItem('mindmelody_session_id'));
+
+              await fetch('/api/moods/track-play', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  moodType: mood,
+                  songTitle: songTitle,
+                  sessionId: sessionId
+                })
+              });
+
+              // Update mood top song display
+              if (moodTopSongEl) {
+                moodTopSongEl.textContent = songTitle;
+              }
+
+              // Show mini player with real song
+              const mini = document.getElementById('miniPlayer');
+              if (mini) {
+                mini.classList.remove('d-none');
+                const miniTitleEl = document.getElementById('miniTitle');
+                const miniArtistEl = document.getElementById('miniArtist');
+                const miniCoverEl = document.getElementById('miniCover');
+                
+                if (miniTitleEl) miniTitleEl.textContent = songTitle;
+                if (miniArtistEl) miniArtistEl.textContent = artist || '—';
+                if (miniCoverEl) miniCoverEl.style.background = 'linear-gradient(90deg,#9b5cff,#5be7ff)';
+              }
+
+              // Show success notification
+              showTrackingNotification(`🎵 Selected: ${songTitle}`);
+            } else {
+              // Fallback if no songs found
+              if (moodTopSongEl) {
+                moodTopSongEl.textContent = `${mood} playlist (no specific songs)`;
+              }
+            }
+          } catch (error) {
+            console.warn('Failed to load mood data:', error);
+            // Show error state
+            const moodTopSongEl = document.getElementById('moodTopSong');
+            if (moodTopSongEl) {
+              moodTopSongEl.textContent = `${mood} mood selected (offline mode)`;
+            }
+          }
+        }
+      });
+    });
+
+    // Navigate to player page with current song data
+    function navigateToPlayer() {
+      const title = document.getElementById('miniTitle').textContent;
+      const artist = document.getElementById('miniArtist').textContent;
+      const currentMood = document.getElementById('currentMood').textContent;
+
+      if (title && title !== 'No song') {
+        // Track the mood play
+        if (currentMood && currentMood !== '—') {
+          fetch('/api/moods/track-play', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              moodType: currentMood,
+              songTitle: title,
+              sessionId: localStorage.getItem('mindmelody_session_id') || (localStorage.setItem('mindmelody_session_id', Date.now() + '-' + Math.random().toString(36).substr(2, 9)), localStorage.getItem('mindmelody_session_id'))
+            })
+          }).catch(e => console.warn('Failed to track mood play:', e));
+        }
+
+        const params = new URLSearchParams();
+        if (title) params.set('song', encodeURIComponent(title));
+        if (artist && artist !== '—') params.set('artist', encodeURIComponent(artist));
+
+        const url = 'player-modern.html?' + params.toString();
+        window.location.href = url;
+      }
+    }
+
+    // Navigate to player with current mood mix
+    function playMoodMix() {
+      const currentMood = document.getElementById('currentMood').textContent;
+
+      if (currentMood && currentMood !== '—') {
+        // Track mood play
+        fetch('/api/moods/track-play', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            moodType: currentMood,
+            sessionId: localStorage.getItem('mindmelody_session_id') || (localStorage.setItem('mindmelody_session_id', Date.now() + '-' + Math.random().toString(36).substr(2, 9)), localStorage.getItem('mindmelody_session_id'))
+          })
+        }).catch(e => console.warn('Failed to track mood play:', e));
+
+        const params = new URLSearchParams();
+        params.set('mood', encodeURIComponent(currentMood));
+
+        const url = 'player-modern.html?' + params.toString();
+        window.location.href = url;
+      } else {
+        // If no mood is selected, show an alert or select a default mood
+        alert('Please select a mood first by clicking on one of the mood buttons above.');
+      }
+    }
+
+    // Test mood tracking function for demo buttons
+    async function testMoodTrack(moodType, fallbackSongTitle) {
+      // Update UI to show selected mood
+      document.getElementById('currentMood').textContent = moodType;
+
+      try {
+        // Fetch real songs for this mood first
+        const response = await fetch(`/api/songs/${encodeURIComponent(moodType)}`);
+        const data = await response.json();
+
+        let songTitle = fallbackSongTitle;
+
+        if (data.songs && data.songs.length > 0) {
+          const firstSong = data.songs[0];
+          songTitle = firstSong.title || firstSong.name || fallbackSongTitle;
+        }
+
+        // Track mood play with real data
+        const sessionId = localStorage.getItem('mindmelody_session_id') ||
+                         (localStorage.setItem('mindmelody_session_id', Date.now() + '-' + Math.random().toString(36).substr(2, 9)), localStorage.getItem('mindmelody_session_id'));
+
+        const trackResponse = await fetch('/api/moods/track-play', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            moodType: moodType,
+            songTitle: songTitle,
+            sessionId: sessionId
+          })
+        });
+
+        if (trackResponse.ok) {
+          // Show success feedback
+          showTrackingNotification(`✅ Tracked: ${moodType} - ${songTitle}`);
+        } else {
+          throw new Error('Failed to track mood play');
+        }
+
+        // Update mood top song display
+        document.getElementById('moodTopSong').textContent = `Demo: ${songTitle}`;
+
+        // Show mini player
+        const miniPlayer = document.getElementById('miniPlayer');
+        miniPlayer.classList.remove('d-none');
+        document.getElementById('miniTitle').textContent = songTitle;
+        document.getElementById('miniCover').style.background = 'linear-gradient(90deg,#9b5cff,#5be7ff)';
+
+      } catch (e) {
+        console.warn('Failed to track mood play:', e);
+        showTrackingNotification(`❌ Failed to track: ${moodType} (check console)`);
+
+        // Fallback to basic tracking with provided song title
+        const sessionId = localStorage.getItem('mindmelody_session_id') ||
+                         (localStorage.setItem('mindmelody_session_id', Date.now() + '-' + Math.random().toString(36).substr(2, 9)), localStorage.getItem('mindmelody_session_id'));
+
+        fetch('/api/moods/track-play', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            moodType: moodType,
+            songTitle: fallbackSongTitle,
+            sessionId: sessionId
+          })
+        }).catch(console.warn);
+      }
+    }
+
+    // Populate all sample data for testing
+    async function populateAllSampleData() {
+      const moodTypes = ['Happy', 'Sad', 'Angry', 'Relaxed', 'Energetic', 'Excited', 'Romantic', 'Night'];
+
+      let successCount = 0;
+      const sessionId = localStorage.getItem('mindmelody_session_id') ||
+                       (localStorage.setItem('mindmelody_session_id', Date.now() + '-' + Math.random().toString(36).substr(2, 9)), localStorage.getItem('mindmelody_session_id'));
+
+      showTrackingNotification(`🚀 Populating sample data with real songs from database...`);
+
+      // Process each mood type
+      for (const moodType of moodTypes) {
+        try {
+          // Fetch real songs for this mood
+          const response = await fetch(`/api/songs/${encodeURIComponent(moodType)}`);
+          const data = await response.json();
+
+          if (data.songs && data.songs.length > 0) {
+            // Track the first song for each mood
+            const firstSong = data.songs[0];
+            const songTitle = firstSong.title || firstSong.name || `${moodType} Mix`;
+
+            await fetch('/api/moods/track-play', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                moodType: moodType,
+                songTitle: songTitle,
+                sessionId: sessionId
+              })
+            });
+
+            successCount++;
+          }
+        } catch (e) {
+          console.warn(`Failed to populate ${moodType}:`, e);
+        }
+
+        // Small delay between requests
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+
+      showTrackingNotification(`✅ Populated ${successCount}/${moodTypes.length} mood types with real data! Check database.`);
+    }
+
+    // View database function
+    function viewDatabase() {
+      fetch('/api/moods/history')
+        .then(response => response.json())
+        .then(data => {
+          if (data.history && data.history.length > 0) {
+            const historyText = data.history.map(item =>
+              `${item.mood_type} - ${item.song_title || 'No song'} (${new Date(item.played_at).toLocaleString()})`
+            ).join('\n');
+
+            alert(`📊 Recent Mood Plays:\n\n${historyText}\n\n💡 For full database access, use MySQL tools or run check-moods.bat`);
+          } else {
+            alert('📊 No mood plays recorded yet. Click some mood buttons or demo buttons first!');
+          }
+        })
+        .catch(e => {
+          alert('💡 To view database:\n\nOption 1: Use MySQL Workbench\nOption 2: Run check-moods.bat in terminal\nOption 3: Use mysql -u root -p mind_melody');
+        });
+    }
+  </script>
+</body>
+</html>

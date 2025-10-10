@@ -1,0 +1,184 @@
+/* Modern dark neon theme for Mind Melody
+   - Responsive layout
+   - Neon accents (purple / pink / blue)
+   - Smooth transitions, hover effects, animations
+   - Uses Poppins / Inter fallback (index.html should also include Google Fonts)
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@300;400;600&display=swap');
+
+:root{
+  --bg-0: #040616;
+  --bg-1: #071022;
+  --panel: rgba(255,255,255,0.03);
+  --muted: #9fb2c1;
+  --text: #eafcff;
+  --glass: rgba(255,255,255,0.04);
+  --neon-purple: #9b5cff;
+  --neon-pink: #ff6bb0;
+  --neon-cyan: #5be7ff;
+  --accent-grad: linear-gradient(90deg,var(--neon-purple),var(--neon-cyan));
+  --radius: 14px;
+  --shadow-lg: 0 18px 40px rgba(2,8,20,0.7);
+  --max-width: 1180px;
+  --gap: 20px;
+  font-family: "Poppins", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color-scheme: dark;
+}
+
+/* Base / Layout */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100%;
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(155,92,255,0.08), transparent 8%),
+              radial-gradient(900px 500px at 95% 90%, rgba(91,231,255,0.04), transparent 8%),
+              linear-gradient(180deg,var(--bg-0),var(--bg-1));
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.45;
+  padding-bottom:100px; /* for mini-player space */
+}
+
+/* Container */
+.site-inner{max-width:var(--max-width);margin:0 auto;padding:20px}
+
+/* Header */
+.site-header{
+  position:sticky;top:0;z-index:60;
+  backdrop-filter: blur(6px);
+  background: linear-gradient(180deg, rgba(3,8,18,0.3), rgba(3,8,18,0.15));
+  border-bottom:1px solid rgba(255,255,255,0.02);
+}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:var(--max-width);margin:0 auto;padding:18px}
+.brand-wrap{display:flex;align-items:center;gap:12px}
+.logo{display:inline-flex;align-items:center;gap:8px;color:var(--text);text-decoration:none}
+.brand{font-weight:700;font-size:18px}
+.main-nav .nav-list{display:flex;gap:12px;margin:0;padding:0;list-style:none}
+.nav-link{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:10px;transition:all .18s ease}
+.nav-link:hover, .nav-link:focus{color:var(--text);background:linear-gradient(90deg, rgba(155,92,255,0.08), rgba(91,231,255,0.04));transform:translateY(-3px)}
+
+/* Main grid layout */
+.main{
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  gap:var(--gap);
+  align-items:start;
+  padding:24px 20px;
+}
+@media (max-width:980px){
+  .main{grid-template-columns:1fr;padding:16px}
+}
+
+/* Cards */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:var(--radius);
+  padding:18px;
+  border:1px solid var(--glass);
+  box-shadow:var(--shadow-lg);
+}
+
+/* Hero */
+.hero{display:flex;gap:20px;align-items:center;justify-content:space-between;padding:28px}
+@media (max-width:980px){ .hero{flex-direction:column;align-items:stretch} }
+
+.hero-title{font-size:28px;margin:0 0 8px;line-height:1.05}
+.hero-sub{color:var(--muted);margin:0 0 18px}
+
+/* Search */
+.search-form{display:flex;gap:8px;max-width:720px}
+.search-input{
+  flex:1;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.03);
+  color:var(--text);outline:none;font-size:15px;transition:box-shadow .15s, transform .12s;
+}
+.search-input:focus{box-shadow:0 6px 28px rgba(91,231,255,0.06);transform:translateY(-2px)}
+.search-btn{
+  padding:12px 16px;border-radius:12px;border:0;background:var(--accent-grad);color:#021320;font-weight:600;cursor:pointer;
+  transition:transform .12s, box-shadow .12s;
+}
+.search-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(107,138,255,0.12)}
+
+/* Emoji / Mood grid */
+.emoji-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:12px;margin-top:10px}
+.emoji-btn{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+  border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.02);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  transition:transform .16s ease, box-shadow .16s ease, background .16s;
+  color:var(--text);font-size:20px;
+}
+.emoji-btn span{font-size:13px;color:var(--muted)}
+.emoji-btn:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(4,14,28,0.6)}
+.emoji-btn.selected{background:linear-gradient(135deg, rgba(155,92,255,0.12), rgba(91,231,255,0.08)); border-color: rgba(155,92,255,0.12); color:#021320}
+
+/* Current Mood panel */
+.mood-section{display:flex;flex-direction:column;gap:14px}
+.current-mood{display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+.mood-indicator{
+  width:68px;height:68px;border-radius:12px;background:linear-gradient(135deg,var(--neon-pink),var(--neon-cyan));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;
+  box-shadow:0 12px 36px rgba(155,92,255,0.08);
+}
+.mood-meta .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+.top-song{font-weight:700;font-size:16px}
+
+/* Suggestions / song cards grid */
+.suggestions .suggestion-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:12px;
+}
+.song-card{
+  display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));
+  border:1px solid rgba(255,255,255,0.02);transition:transform .14s ease, box-shadow .14s ease;
+}
+.song-card:hover{transform:translateY(-8px);box-shadow:0 20px 48px rgba(6,40,50,0.6)}
+.song-art{width:72px;height:72px;border-radius:10px;background:linear-gradient(135deg,var(--neon-purple),var(--neon-cyan));flex-shrink:0}
+.song-body{flex:1;min-width:0}
+.song-title{margin:0;font-weight:700;font-size:15px}
+.song-artist{margin:6px 0 0;color:var(--muted);font-size:13px}
+.card-actions{margin-top:10px;display:flex;gap:8px}
+.btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+.btn-primary{background:var(--accent-grad);color:#021320}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
+.btn-sm{padding:6px 10px;border-radius:8px;font-weight:600;font-size:13px}
+.play-btn{background:linear-gradient(90deg,var(--neon-cyan),var(--neon-purple));color:#021320}
+
+/* Mini player styling */
+.mini-player{
+  position:fixed;left:18px;right:18px;bottom:18px;display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
+  background: linear-gradient(90deg, rgba(4,12,20,0.75), rgba(2,6,10,0.6));
+  border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 60px rgba(2,10,18,0.7);z-index:90;backdrop-filter: blur(6px);transition:transform .18s, box-shadow .18s;
+}
+.mini-player.hidden{display:none}
+.mini-cover{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.mini-meta{flex:1;min-width:0}
+.mini-title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-artist{font-size:13px;color:var(--muted);margin-top:6px}
+.mini-controls{display:flex;align-items:center;gap:8px}
+.icon-btn{padding:10px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-pink));cursor:pointer;color:#021320;font-weight:700}
+.icon-btn:active{transform:scale(.98)}
+
+/* Footer */
+.site-footer{padding:28px 0 48px;margin-top:40px;border-top:1px solid rgba(255,255,255,0.02)}
+.footer-inner{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.footer-left{display:flex;flex-direction:column}
+.footer-right{display:flex;gap:12px;align-items:center}
+.social-link{color:var(--muted);text-decoration:none;padding:8px;border-radius:8px}
+.social-link:hover{color:var(--text);text-shadow:0 6px 30px rgba(155,92,255,0.08)}
+
+/* Animations / utility */
+@keyframes floaty { 0%{transform:translateY(0)} 50%{transform:translateY(-6px)} 100%{transform:translateY(0)} }
+.celebrate{animation:floaty 1s ease-in-out 1}
+.hidden{display:none}
+
+/* Responsive tweaks */
+@media (max-width:720px){
+  .header-inner{padding:12px}
+  .main{padding:12px;gap:12px}
+  .hero-title{font-size:22px}
+  .search-form{flex-direction:column}
+  .search-btn{width:100%}
+  .mini-player{left:12px;right:12px;padding:10px}
+  .song-art{width:56px;height:56px}
+  .emoji-grid{grid-template-columns:repeat(auto-fit,minmax(64px,1fr))}
+}
