@@ -1,0 +1,47 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:mood-music-app >---------------------
+[INFO] Building Mood Music App 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ mood-music-app ---
+[INFO] Deleting C:\Users\Gyan\Downloads\Mind Melody\mood-music-app\backend\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ mood-music-app ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ mood-music-app ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 24 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/Gyan/Downloads/Mind Melody/mood-music-app/backend/src/main/java/com/example/handler/DeviceWebSocketHandler.java: C:\Users\Gyan\Downloads\Mind Melody\mood-music-app\backend\src\main\java\com\example\handler\DeviceWebSocketHandler.java uses unchecked or unsafe operations.
+[INFO] /C:/Users/Gyan/Downloads/Mind Melody/mood-music-app/backend/src/main/java/com/example/handler/DeviceWebSocketHandler.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/Gyan/Downloads/Mind Melody/mood-music-app/backend/src/main/java/com/example/handler/DeviceWebSocketHandler.java:[44,29] constructor Device in class com.example.model.Device cannot be applied to given types;
+  required: no arguments
+  found:    java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String
+  reason: actual and formal argument lists differ in length
+[INFO] 1 error
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.630 s
+[INFO] Finished at: 2025-12-01T23:41:11+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project mood-music-app: Compilation failure
+[ERROR] /C:/Users/Gyan/Downloads/Mind Melody/mood-music-app/backend/src/main/java/com/example/handler/DeviceWebSocketHandler.java:[44,29] constructor Device in class com.example.model.Device cannot be applied to given types;
+[ERROR]   required: no arguments
+[ERROR]   found:    java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

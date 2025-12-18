@@ -28,7 +28,7 @@ public class MoodDao {
              ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 Mood mood = new Mood();
-                mood.setId(resultSet.getInt("id"));
+                mood.setId(resultSet.getLong("id"));  // Using getLong for ID
                 mood.setMoodType(resultSet.getString("mood_type"));
                 mood.setSongRecommendation(resultSet.getString("song_recommendation"));
                 moods.add(mood);

@@ -1,4 +1,6 @@
 {
     "git.ignoreLimitWarning": true,
-    "livePreview.defaultPreviewPath": "/mood-music-app/frontend/index.html"
+    "livePreview.defaultPreviewPath": "/mood-music-app/frontend/index.html",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
